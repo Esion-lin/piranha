@@ -305,7 +305,9 @@ RSSBase<T, I> &RSSBase<T, I>::operator*=(const RSSBase<T, I2> &rhs) {
             //assert(temp_result < (1 << (64 - (2 * FLOAT_PRECISION))) && "overflow in RSS multiplication");
         }
     }
-
+    std::chrono::steady_clock::time_point start,end;
+    std::chrono::duration<double> time_span1;
+    start= std::chrono::steady_clock::now();
     DeviceData<T> summed(rhs.size());
     summed.zero();
     summed += *rhs.getShare(0);
@@ -314,8 +316,11 @@ RSSBase<T, I> &RSSBase<T, I>::operator*=(const RSSBase<T, I2> &rhs) {
     *shareA *= summed;
     *shareB *= *rhs.getShare(0);
     *shareA += *shareB;
-
+    
     reshare(*shareA, *this);
+    end = std::chrono::steady_clock::now();
+    time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
+    std:: cout <<std::endl<<"-------------------------- cost "<<" "<<time_span1.count()<<std::endl;
     return *this;
 }
 
@@ -384,7 +389,33 @@ RSS<T, BufferIterator<T> >::RSS(size_t n) :
     _shareA(n),
     _shareB(n),
     RSSBase<T, BufferIterator<T> >(&_shareA, &_shareB) {}
+template<typename T>
+RSS<T, BufferIterator<T> >::RSS(std::vector<double> il, bool convertToFixedPoint) :
+    _shareA(il.size()),
+    _shareB(il.size()),
+    RSSBase<T, BufferIterator<T> >(&_shareA, &_shareB) {
 
+    std::vector<T> shifted_vals;
+    for (double f : il) {
+        if (convertToFixedPoint) {
+            shifted_vals.push_back((T) (f * (1 << FLOAT_PRECISION)));
+        } else {
+            shifted_vals.push_back((T) f);
+        }
+    }
+
+    switch (partyNum) {
+        case RSS<T>::PARTY_A:
+            thrust::copy(shifted_vals.begin(), shifted_vals.end(), _shareA.begin());
+            break;
+        case RSS<T>::PARTY_B:
+            // nothing
+            break;
+        case RSS<T>::PARTY_C:
+            thrust::copy(shifted_vals.begin(), shifted_vals.end(), _shareB.begin());
+            break;
+    }
+}
 template<typename T>
 RSS<T, BufferIterator<T> >::RSS(std::initializer_list<double> il, bool convertToFixedPoint) :
     _shareA(il.size()),

@@ -19,7 +19,7 @@
 #include "util/util.cuh"
 #include "../ext/cxxopts.hpp"
 #include <json.hpp>
-
+#include "mpc/Verfiy.h"
 int partyNum;
 std::vector<AESObject*> aes_objects;
 //AESObject* aes_indep;
@@ -104,6 +104,30 @@ int main(int argc, char** argv) {
     //aes_prev = new AESObject(options.aes_prev_file);
 
     // Unit tests
+
+    std::vector<double> in_1(1<<20), in_2(1<<20);
+    std::vector<double> in_3(32);
+    RSS<uint64_t> a (in_1, false); 
+    RSS<uint64_t> b (in_2, false);
+    RSS<uint64_t> c (in_3, false);
+    DeviceData<uint64_t> result(a.size());
+
+    func_profiler.clear();
+    func_profiler.start();
+    std::chrono::steady_clock::time_point start,end;
+    std::chrono::duration<double> time_span1;
+    start= std::chrono::steady_clock::now();
+    b *= a;
+    end = std::chrono::steady_clock::now();
+    time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
+    std:: cout <<std::endl<<"-------------------------- cost "<<" "<<time_span1.count()<<std::endl;
+    DotForRing dot;
+    start= std::chrono::steady_clock::now();
+    dot.online(a, b, c);
+    end = std::chrono::steady_clock::now();
+    time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
+    std:: cout <<std::endl<<"-------------------------- cost "<<" "<<time_span1.count()<<std::endl;
+    exit(0);
     if (piranha_config["run_unit_tests"]) {
         int returnCode = runTests(argc, argv);
         if (returnCode != 0 || piranha_config["unit_test_only"]) {

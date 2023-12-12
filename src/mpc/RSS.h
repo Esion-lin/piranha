@@ -91,6 +91,7 @@ class RSS<T, BufferIterator<T> > : public RSSBase<T, BufferIterator<T> > {
         RSS(DeviceData<T> *a, DeviceData<T> *b);
         RSS(size_t n);
         RSS(std::initializer_list<double> il, bool convertToFixedPoint = true);
+        RSS(std::vector<double> il, bool convertToFixedPoint = true);
 
         void resize(size_t n);
 

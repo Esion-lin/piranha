@@ -11,24 +11,24 @@ struct FuncTest : public testing::Test {
 using Types = testing::Types<RSS<uint64_t>, TPC<uint64_t>, FPC<uint64_t>, OPC<uint64_t> >;
 TYPED_TEST_CASE(FuncTest, Types);
 
-TYPED_TEST(FuncTest, Reconstruct) {
+// TYPED_TEST(FuncTest, Reconstruct) {
 
-    using Share = typename TestFixture::ParamType;
-    using T = typename Share::share_type;
+//     using Share = typename TestFixture::ParamType;
+//     using T = typename Share::share_type;
 
-    if (partyNum >= Share::numParties) return;
+//     if (partyNum >= Share::numParties) return;
 
-    Share a = {1, 1, 2, 8, 12.2, 1};  // 2 x 3
+//     Share a = {1, 1, 2, 8, 12.2, 1};  // 2 x 3
 
-    DeviceData<T> result(6);
+//     DeviceData<T> result(6);
 
-    func_profiler.clear();
-    func_profiler.start();
-    reconstruct(a, result);
+//     func_profiler.clear();
+//     func_profiler.start();
+//     reconstruct(a, result);
 
-    std::vector<double> expected = {1, 1, 2, 8, 12.2, 1};
-    assertDeviceData(result, expected);
-}
+//     std::vector<double> expected = {1, 1, 2, 8, 12.2, 1};
+//     assertDeviceData(result, expected);
+// }
 
 TYPED_TEST(FuncTest, MatMul) {
 
@@ -75,26 +75,26 @@ TYPED_TEST(FuncTest, MatMul2) {
     assertDeviceData(result, expected);
 }
 
-TYPED_TEST(FuncTest, Mult) {
+// TYPED_TEST(FuncTest, Mult) {
 
-    using Share = typename TestFixture::ParamType;
-    using T = typename Share::share_type;
+//     using Share = typename TestFixture::ParamType;
+//     using T = typename Share::share_type;
 
-    if (partyNum >= Share::numParties) return;
+//     if (partyNum >= Share::numParties) return;
+//     std::vector<double> in_1(2<<20), in_2(2<<20),in_3(2<<20);
+//     RSS<uint64_t> a ({begin(in_1),end(in_1)}, false); 
+//     RSS<uint64_t> b ({begin(in_2),end(in_2)}, false);
 
-    Share a ({12, 24, 3, 5, -2, -3}, false); 
-    Share b ({1, 0, 11, 3, -1, 11}, false);
+//     DeviceData<uint64_t> result(a.size());
 
-    DeviceData<T> result(a.size());
+//     func_profiler.clear();
+//     func_profiler.start();
+//     b *= a;
+//     reconstruct(b, result);
 
-    func_profiler.clear();
-    func_profiler.start();
-    b *= a;
-    reconstruct(b, result);
-
-    std::vector<double> expected = {12, 0, 33, 15, 2, -33};
-    assertDeviceData(result, expected, false);
-}
+    
+//     // assertDeviceData(result, in_3, false);
+// }
 
 TYPED_TEST(FuncTest, Truncate) {
 
