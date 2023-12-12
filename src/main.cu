@@ -127,6 +127,19 @@ int main(int argc, char** argv) {
     end = std::chrono::steady_clock::now();
     time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
     std:: cout <<std::endl<<"-------------------------- cost "<<" "<<time_span1.count()<<std::endl;
+    DotVerify dotv;
+    MSS  x(1<<20), y(1<<20), z(1);
+    start= std::chrono::steady_clock::now();
+    dotv.set_up(x, y, z);
+    end = std::chrono::steady_clock::now();
+    time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
+    std:: cout <<std::endl<<"-------------------------- verifiy set_up cost "<<" "<<time_span1.count()<<std::endl;
+    start= std::chrono::steady_clock::now();
+    dotv.verify(x, y, z);
+    end = std::chrono::steady_clock::now();
+    time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
+    std:: cout <<std::endl<<"-------------------------- verifiy online cost "<<" "<<time_span1.count()<<std::endl;
+    
     exit(0);
     if (piranha_config["run_unit_tests"]) {
         int returnCode = runTests(argc, argv);
