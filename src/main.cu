@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-
+#include "mpc/maliciously_aby.h"
 #include "globals.h"
 #include "mpc/AESObject.h"
 #include "mpc/Precompute.h"
@@ -104,16 +104,44 @@ int main(int argc, char** argv) {
     //aes_prev = new AESObject(options.aes_prev_file);
 
     // Unit tests
-
+    
     std::vector<double> in_1(1<<20), in_2(1<<20);
-    std::vector<double> in_3(32);
+    std::vector<double> in_3(1<<20);
     MSS_Single<uint64_t> a(1<<20), b(1<<20), c(1<<20);
     DeviceData<uint64_t> result(a.r_1.size());
-
-    func_profiler.clear();
-    func_profiler.start();
     std::chrono::steady_clock::time_point start,end;
     std::chrono::duration<double> time_span1;
+
+
+    RSS<uint64_t> rss_a (in_1, false); 
+    RSS<uint64_t> rss_b (in_2, false);
+    RSS<uint64_t> rss_c (in_3, false);
+
+
+    //test aby3
+
+    
+    func_profiler.clear();
+    func_profiler.start();
+    
+
+
+    start= std::chrono::steady_clock::now();
+    rss_c.zero();
+    rss_c += rss_a;
+    rss_c *= rss_b;
+    end = std::chrono::steady_clock::now();
+    time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
+    std:: cout <<std::endl<<"------------aby multiplication-------------- cost "<<" "<<time_span1.count()<<std::endl;
+
+    start= std::chrono::steady_clock::now();
+    RSS_verify<uint64_t>(&rss_a, &rss_b, &rss_c);
+    end = std::chrono::steady_clock::now();
+    time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
+    std:: cout <<std::endl<<"------------aby multiplication verify-------------- cost "<<" "<<time_span1.count()<<std::endl;
+
+
+
     MSS_Multiplication<uint64_t> mult;
     start= std::chrono::steady_clock::now();
     mult.set_up(a, b, c);
@@ -191,6 +219,42 @@ int main(int argc, char** argv) {
     time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
     std:: cout <<std::endl<<"------------mss ring reduce-------------- cost "<<" "<<time_span1.count()<<std::endl;
 
+    printf("start verify with %d reduce\n", 9);
+     start= std::chrono::steady_clock::now();
+    DotVerifyWithReduce<9>(&x, &y, &z);
+    end = std::chrono::steady_clock::now();
+    time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
+    std:: cout <<std::endl<<"------------mss ring reduce-------------- cost "<<" "<<time_span1.count()<<std::endl;
+
+
+    printf("start verify with %d reduce\n", 10);
+     start= std::chrono::steady_clock::now();
+    DotVerifyWithReduce<10>(&x, &y, &z);
+    end = std::chrono::steady_clock::now();
+    time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
+    std:: cout <<std::endl<<"------------mss ring reduce-------------- cost "<<" "<<time_span1.count()<<std::endl;
+
+
+    printf("start verify with %d reduce\n", 11);
+     start= std::chrono::steady_clock::now();
+    DotVerifyWithReduce<11>(&x, &y, &z);
+    end = std::chrono::steady_clock::now();
+    time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
+    std:: cout <<std::endl<<"------------mss ring reduce-------------- cost "<<" "<<time_span1.count()<<std::endl;
+
+    printf("start verify with %d reduce\n", 12);
+     start= std::chrono::steady_clock::now();
+    DotVerifyWithReduce<12>(&x, &y, &z);
+    end = std::chrono::steady_clock::now();
+    time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
+    std:: cout <<std::endl<<"------------mss ring reduce-------------- cost "<<" "<<time_span1.count()<<std::endl;
+
+    printf("start verify with %d reduce\n", 13);
+     start= std::chrono::steady_clock::now();
+    DotVerifyWithReduce<13>(&x, &y, &z);
+    end = std::chrono::steady_clock::now();
+    time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
+    std:: cout <<std::endl<<"------------mss ring reduce-------------- cost "<<" "<<time_span1.count()<<std::endl;
 
     // printf("start reduce\n");
     // start= std::chrono::steady_clock::now();

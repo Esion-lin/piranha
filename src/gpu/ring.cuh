@@ -191,7 +191,7 @@ void ringExpend(
 
 
 
-    printf("ringExpend: %dx%d\n", data_len1, data_len2);
+    // printf("ringExpend: %dx%d\n", data_len1, data_len2);
 
     dim3 threadsPerBlock(data_len2, data_len1);
     dim3 blocksPerGrid(1, 1);
@@ -226,7 +226,7 @@ void ringMultiplication(
 
 
 
-    printf("ringMultiplication: %dx%d\n", data_len, degree);
+    // printf("ringMultiplication: %dx%d\n", data_len, degree);
 
     dim3 threadsPerBlock(degree, data_len);
     dim3 blocksPerGrid(1, 1);
@@ -260,7 +260,7 @@ void ringDot(
 
 
 
-    printf("ringDot: %dx%d\n", data_len, degree);
+    // printf("ringDot: %dx%d\n", data_len, degree);
 
     dim3 threadsPerBlock(degree, data_len);
     dim3 blocksPerGrid(1, 1);
@@ -295,7 +295,7 @@ void mssOffline(
 
 
 
-    printf("mssOffline: %dx%d\n", data_len, degree);
+    // printf("mssOffline: %dx%d\n", data_len, degree);
 
     dim3 threadsPerBlock(degree, data_len);
     dim3 blocksPerGrid(1, 1);
@@ -331,7 +331,7 @@ void mssOnline(
 
 
 
-    printf("mssOnline: %dx%d\n", data_len, degree);
+    // printf("mssOnline: %dx%d\n", data_len, degree);
 
     dim3 threadsPerBlock(degree, data_len);
     dim3 blocksPerGrid(1, 1);
@@ -369,7 +369,7 @@ void mssOnline_1d(
 
 
 
-    printf("mssonline_id: %dx%d\n", data_len1, data_len2);
+    // printf("mssonline_id: %dx%d\n", data_len1, data_len2);
 
     dim3 threadsPerBlock(data_len2, data_len1);
     dim3 blocksPerGrid(1, 1);
@@ -405,7 +405,7 @@ template<typename T, typename I>
 void ringLineInterpolation(
         const DeviceData<T, I> *x, const DeviceData<T, I> *f0, DeviceData<T, I> *f1, DeviceData<T, I> *f2,
         size_t data_len, size_t degree) {
-    printf("ringLineInterpolation: %dx%d\n", data_len, degree);
+    // printf("ringLineInterpolation: %dx%d\n", data_len, degree);
 
     dim3 threadsPerBlock(degree, data_len);
     dim3 blocksPerGrid(1, 1);
@@ -439,7 +439,7 @@ void ringInterpolation_1d(
         const DeviceData<T, I> *delta, const DeviceData<T, I> *f1, DeviceData<T, I> *f2, DeviceData<T, I> *g1, DeviceData<T, I> *g2,DeviceData<T, I> *f,DeviceData<T, I> *g,
         size_t data_len, size_t degree) {
 
-    printf("ringInterpolation_1d: %dx%d\n", data_len, degree);
+    // printf("ringInterpolation_1d: %dx%d\n", data_len, degree);
 
     dim3 threadsPerBlock(degree, data_len);
     dim3 blocksPerGrid(1, 1);
@@ -477,7 +477,7 @@ void ringInterpolation_2d(
         const DeviceData<T, I> *delta, const DeviceData<T, I> *h1, DeviceData<T, I> *h2, DeviceData<T, I> *h3, DeviceData<T, I> *h,
         size_t data_len, size_t degree) {
 
-    printf("ringInterpolation_2d: %dx%d\n", data_len, degree);
+    // printf("ringInterpolation_2d: %dx%d\n", data_len, degree);
 
     dim3 threadsPerBlock(degree, data_len);
     dim3 blocksPerGrid(1, 1);

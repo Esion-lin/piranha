@@ -305,9 +305,7 @@ RSSBase<T, I> &RSSBase<T, I>::operator*=(const RSSBase<T, I2> &rhs) {
             //assert(temp_result < (1 << (64 - (2 * FLOAT_PRECISION))) && "overflow in RSS multiplication");
         }
     }
-    std::chrono::steady_clock::time_point start,end;
-    std::chrono::duration<double> time_span1;
-    start= std::chrono::steady_clock::now();
+    
     DeviceData<T> summed(rhs.size());
     summed.zero();
     summed += *rhs.getShare(0);
@@ -318,9 +316,6 @@ RSSBase<T, I> &RSSBase<T, I>::operator*=(const RSSBase<T, I2> &rhs) {
     *shareA += *shareB;
     
     reshare(*shareA, *this);
-    end = std::chrono::steady_clock::now();
-    time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
-    std:: cout <<std::endl<<"-------------------------- cost "<<" "<<time_span1.count()<<std::endl;
     return *this;
 }
 

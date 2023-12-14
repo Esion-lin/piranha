@@ -217,7 +217,7 @@ bool DotReduce(MSS* x,MSS* y, MSS* z, MSS* x_p, MSS* y_p, MSS* z_p){
     MSS gg0(x->r.size()/Degree/2),gg1(x->r.size()/Degree/2),gg2(x->r.size()/Degree/2);
     MSS hh0(1), hh1(1), hh2(1);
     // gpu::ringLineInterpolation(x.r, ff0.r, ff1.r, ff2.r, x.r.size(), Degree);
-    printf("start interpolation%d %d\n", x->r_1.size(), Degree);
+    // printf("start interpolation%d %d\n", x->r_1.size(), Degree);
     gpu::ringLineInterpolation(&x->r_1, &ff0.r_1, &ff1.r_1, &ff2.r_1, x->r_1.size()/Degree, Degree);
     gpu::ringLineInterpolation(&x->r_2, &ff0.r_2, &ff1.r_2, &ff2.r_2, x->r_2.size()/Degree, Degree);
     // gpu::ringLineInterpolation(y.r, gg0.r, gg1.r, gg2.r, x.r.size(), Degree);
