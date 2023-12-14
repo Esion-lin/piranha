@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include "mpc/maliciously_aby.h"
+#include "mpc/swift.h"
 #include "globals.h"
 #include "mpc/AESObject.h"
 #include "mpc/Precompute.h"
@@ -104,15 +105,18 @@ int main(int argc, char** argv) {
     //aes_prev = new AESObject(options.aes_prev_file);
 
     // Unit tests
-    
-    std::vector<double> in_1(1<<20), in_2(1<<20);
-    std::vector<double> in_3(1<<20);
-    MSS_Single<uint64_t> a(1<<20), b(1<<20), c(1<<20);
+    uint32_t test_len = 1<<20;
+    std::vector<double> in_1(test_len), in_2(test_len);
+    std::vector<double> in_3(test_len);
+    MSS_Single<uint64_t> a(test_len), b(test_len), c(test_len);
     DeviceData<uint64_t> result(a.r_1.size());
     std::chrono::steady_clock::time_point start,end;
     std::chrono::duration<double> time_span1;
 
-
+    SwiftShareType<uint64_t> swift_a(test_len);
+    SwiftShareType<uint64_t> swift_b(test_len);
+    SwiftShareType<uint64_t> swift_c(test_len);
+    
     RSS<uint64_t> rss_a (in_1, false); 
     RSS<uint64_t> rss_b (in_2, false);
     RSS<uint64_t> rss_c (in_3, false);
@@ -140,7 +144,18 @@ int main(int argc, char** argv) {
     time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
     std:: cout <<std::endl<<"------------aby multiplication verify-------------- cost "<<" "<<time_span1.count()<<std::endl;
 
+    Swift<uint64_t> swift;
+    start= std::chrono::steady_clock::now();
+    swift.set_up(&swift_a, &swift_b, &swift_c);
+    end = std::chrono::steady_clock::now();
+    time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
+    std:: cout <<std::endl<<"------------swift multiplication offline-------------- cost "<<" "<<time_span1.count()<<std::endl;
 
+    start= std::chrono::steady_clock::now();
+    swift.online(&swift_a, &swift_b, &swift_c);
+    end = std::chrono::steady_clock::now();
+    time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
+    std:: cout <<std::endl<<"------------swift multiplication online-------------- cost "<<" "<<time_span1.count()<<std::endl;
 
     MSS_Multiplication<uint64_t> mult;
     start= std::chrono::steady_clock::now();
