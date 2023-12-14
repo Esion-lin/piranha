@@ -107,38 +107,109 @@ int main(int argc, char** argv) {
 
     std::vector<double> in_1(1<<20), in_2(1<<20);
     std::vector<double> in_3(32);
-    RSS<uint64_t> a (in_1, false); 
-    RSS<uint64_t> b (in_2, false);
-    RSS<uint64_t> c (in_3, false);
-    DeviceData<uint64_t> result(a.size());
+    MSS_Single<uint64_t> a(1<<20), b(1<<20), c(1<<20);
+    DeviceData<uint64_t> result(a.r_1.size());
 
     func_profiler.clear();
     func_profiler.start();
     std::chrono::steady_clock::time_point start,end;
     std::chrono::duration<double> time_span1;
+    MSS_Multiplication<uint64_t> mult;
     start= std::chrono::steady_clock::now();
-    b *= a;
+    mult.set_up(a, b, c);
     end = std::chrono::steady_clock::now();
     time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
-    std:: cout <<std::endl<<"-------------------------- cost "<<" "<<time_span1.count()<<std::endl;
-    DotForRing dot;
+    std:: cout <<std::endl<<"------------mss multiplication setup-------------- cost "<<" "<<time_span1.count()<<std::endl;
     start= std::chrono::steady_clock::now();
-    dot.online(a, b, c);
+    mult.online(a, b, c);
     end = std::chrono::steady_clock::now();
     time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
-    std:: cout <<std::endl<<"-------------------------- cost "<<" "<<time_span1.count()<<std::endl;
+    std:: cout <<std::endl<<"------------mss multiplication online-------------- cost "<<" "<<time_span1.count()<<std::endl;
+
+
+    // DotForRing dot;
+    // start= std::chrono::steady_clock::now();
+    // dot.online(a, b, c);
+    // end = std::chrono::steady_clock::now();
+    // time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
+    // std:: cout <<std::endl<<"-------------------------- cost "<<" "<<time_span1.count()<<std::endl;
     DotVerify dotv;
-    MSS  x(1<<20), y(1<<20), z(1);
+    MSS  x(a), y(b), z(1), x2(1<<8), y2(1<<8), z2(1);
+    // printf("start verify with %d reduce\n", 1);
+    // start= std::chrono::steady_clock::now();
+    // DotVerifyWithReduce<1>(&x, &y, &z);
+    // end = std::chrono::steady_clock::now();
+    // time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
+    // std:: cout <<std::endl<<"------------mss ring reduce-------------- cost "<<" "<<time_span1.count()<<std::endl;
+
+    // printf("start verify with %d reduce\n", 2);
+    // start= std::chrono::steady_clock::now();
+    // DotVerifyWithReduce<2>(&x, &y, &z);
+    // end = std::chrono::steady_clock::now();
+    // time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
+    // std:: cout <<std::endl<<"------------mss ring reduce-------------- cost "<<" "<<time_span1.count()<<std::endl;
+
+    // printf("start verify with %d reduce\n", 3);
+    // start= std::chrono::steady_clock::now();
+    // DotVerifyWithReduce<3>(&x, &y, &z);
+    // end = std::chrono::steady_clock::now();
+    // time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
+    // std:: cout <<std::endl<<"------------mss ring reduce-------------- cost "<<" "<<time_span1.count()<<std::endl;
+
+    printf("start verify with %d reduce\n", 4);
     start= std::chrono::steady_clock::now();
-    dotv.set_up(x, y, z);
+    DotVerifyWithReduce<4>(&x, &y, &z);
     end = std::chrono::steady_clock::now();
     time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
-    std:: cout <<std::endl<<"-------------------------- verifiy set_up cost "<<" "<<time_span1.count()<<std::endl;
+    std:: cout <<std::endl<<"------------mss ring reduce-------------- cost "<<" "<<time_span1.count()<<std::endl;
+
+    printf("start verify with %d reduce\n", 5);
     start= std::chrono::steady_clock::now();
-    dotv.verify(x, y, z);
+    DotVerifyWithReduce<5>(&x, &y, &z);
     end = std::chrono::steady_clock::now();
     time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
-    std:: cout <<std::endl<<"-------------------------- verifiy online cost "<<" "<<time_span1.count()<<std::endl;
+    std:: cout <<std::endl<<"------------mss ring reduce-------------- cost "<<" "<<time_span1.count()<<std::endl;
+
+    printf("start verify with %d reduce\n", 6);
+    start= std::chrono::steady_clock::now();
+    DotVerifyWithReduce<6>(&x, &y, &z);
+    end = std::chrono::steady_clock::now();
+    time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
+    std:: cout <<std::endl<<"------------mss ring reduce-------------- cost "<<" "<<time_span1.count()<<std::endl;
+
+    printf("start verify with %d reduce\n", 7);
+     start= std::chrono::steady_clock::now();
+    DotVerifyWithReduce<7>(&x, &y, &z);
+    end = std::chrono::steady_clock::now();
+    time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
+    std:: cout <<std::endl<<"------------mss ring reduce-------------- cost "<<" "<<time_span1.count()<<std::endl;
+
+    printf("start verify with %d reduce\n", 8);
+     start= std::chrono::steady_clock::now();
+    DotVerifyWithReduce<8>(&x, &y, &z);
+    end = std::chrono::steady_clock::now();
+    time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
+    std:: cout <<std::endl<<"------------mss ring reduce-------------- cost "<<" "<<time_span1.count()<<std::endl;
+
+
+    // printf("start reduce\n");
+    // start= std::chrono::steady_clock::now();
+    // DotReduce(&x, &y, &z, &x2, &y2, z2);
+    // end = std::chrono::steady_clock::now();
+    // time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
+    // std:: cout <<std::endl<<"------------mss ring reduce-------------- cost "<<" "<<time_span1.count()<<std::endl;
+    
+
+    // start= std::chrono::steady_clock::now();
+    // dotv.set_up(&x2, &y2, &z2);
+    // end = std::chrono::steady_clock::now();
+    // time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
+    // std:: cout <<std::endl<<"------------mss ring verify-------------- set_up cost "<<" "<<time_span1.count()<<std::endl;
+    // start= std::chrono::steady_clock::now();
+    // dotv.verify(&x2, &x2, &z2);
+    // end = std::chrono::steady_clock::now();
+    // time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
+    // std:: cout <<std::endl<<"------------mss ring verify-------------- online cost "<<" "<<time_span1.count()<<std::endl;
     
     exit(0);
     if (piranha_config["run_unit_tests"]) {
