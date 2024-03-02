@@ -1,0 +1,188 @@
+
+------------aby multiplication-------------- cost 0.000882677
+
+------------aby multiplication verify-------------- cost 0.00361399
+
+------------swift multiplication offline-------------- cost 0.000948935
+
+------------swift multiplication online-------------- cost 0.00139265
+
+------------mss multiplication setup-------------- cost  0.000400464
+
+------------mss multiplication online-------------- cost  8.44e-08
+
+------------mss multiplication verify-------------- cost  0.0395048
+
+------------mss multiplication verify-------------- cost  0.0423285
+
+------------mss multiplication verify-------------- cost  0.0486683
+
+------------mss multiplication verify-------------- cost  0.052705
+
+------------mss multiplication verify-------------- cost  0.0508323
+
+------------aby multiplication-------------- cost 0.00114217
+
+------------aby multiplication verify-------------- cost 0.00489519
+
+------------swift multiplication offline-------------- cost 0.00134752
+
+------------swift multiplication online-------------- cost 0.0026405
+
+------------mss multiplication setup-------------- cost  0.000546168
+
+------------mss multiplication online-------------- cost  3.64e-08
+
+------------mss multiplication verify-------------- cost  0.0592941
+
+------------mss multiplication verify-------------- cost  0.059363
+
+------------mss multiplication verify-------------- cost  0.0625903
+
+------------mss multiplication verify-------------- cost  0.0709471
+
+------------mss multiplication verify-------------- cost  0.0715528
+
+------------aby multiplication-------------- cost 0.00256047
+
+------------aby multiplication verify-------------- cost 0.00852729
+
+------------swift multiplication offline-------------- cost 0.0019391
+
+------------swift multiplication online-------------- cost 0.0037701
+
+------------mss multiplication setup-------------- cost  0.0010654
+
+------------mss multiplication online-------------- cost  5.9e-08
+
+------------mss multiplication verify-------------- cost  0.0806839
+
+------------mss multiplication verify-------------- cost  0.0718609
+
+------------mss multiplication verify-------------- cost  0.0728232
+
+------------mss multiplication verify-------------- cost  0.0801588
+
+------------mss multiplication verify-------------- cost  0.0790228
+
+------------aby multiplication-------------- cost 0.00347806
+
+------------aby multiplication verify-------------- cost 0.0146405
+
+------------swift multiplication offline-------------- cost 0.00285715
+
+------------swift multiplication online-------------- cost 0.00596999
+
+------------mss multiplication setup-------------- cost  0.00167945
+
+------------mss multiplication online-------------- cost  5.96e-08
+
+------------mss multiplication verify-------------- cost  0.0994857
+
+------------mss multiplication verify-------------- cost  0.0893056
+
+------------mss multiplication verify-------------- cost  0.0922443
+
+------------mss multiplication verify-------------- cost  0.0950451
+
+------------mss multiplication verify-------------- cost  0.0986421
+
+------------aby multiplication-------------- cost 0.00746568
+
+------------aby multiplication verify-------------- cost 0.0280486
+
+------------swift multiplication offline-------------- cost 0.00700541
+
+------------swift multiplication online-------------- cost 0.012191
+
+------------mss multiplication setup-------------- cost  0.00522059
+
+------------mss multiplication online-------------- cost  9.79e-08
+
+------------mss multiplication verify-------------- cost  0.139891
+
+------------mss multiplication verify-------------- cost  0.131998
+
+------------mss multiplication verify-------------- cost  0.133908
+
+------------mss multiplication verify-------------- cost  0.138583
+
+------------mss multiplication verify-------------- cost  0.13585
+
+------------aby multiplication-------------- cost 0.0144986
+
+------------aby multiplication verify-------------- cost 0.0689841
+
+------------swift multiplication offline-------------- cost 0.0134901
+
+------------swift multiplication online-------------- cost 0.0233613
+
+------------mss multiplication setup-------------- cost  0.0148852
+
+------------mss multiplication online-------------- cost  1.568e-07
+
+------------mss multiplication verify-------------- cost  0.211949
+
+------------mss multiplication verify-------------- cost  0.208994
+
+------------mss multiplication verify-------------- cost  0.214791
+
+------------mss multiplication verify-------------- cost  0.216151
+
+------------mss multiplication verify-------------- cost  0.216098
+
+------------aby multiplication-------------- cost 0.0302234
+
+------------aby multiplication verify-------------- cost 0.130483
+
+------------swift multiplication offline-------------- cost 0.0276508
+
+------------swift multiplication online-------------- cost 0.0414636
+
+------------mss multiplication setup-------------- cost  0.0311526
+
+------------mss multiplication online-------------- cost  1.5e-07
+
+------------mss multiplication verify-------------- cost  0.348978
+
+------------mss multiplication verify-------------- cost  0.345495
+
+------------mss multiplication verify-------------- cost  0.347582
+
+------------mss multiplication verify-------------- cost  0.349936
+
+------------mss multiplication verify-------------- cost  0.351775
+
+------------aby multiplication-------------- cost 0.0608616
+
+------------aby multiplication verify-------------- cost 0.256725
+
+------------swift multiplication offline-------------- cost 0.0609433
+
+------------swift multiplication online-------------- cost 0.0887936
+
+------------mss multiplication setup-------------- cost  0.0647393
+
+------------mss multiplication online-------------- cost  1.433e-07
+
+------------mss multiplication verify-------------- cost  0.615284
+
+------------mss multiplication verify-------------- cost  0.604495
+
+------------mss multiplication verify-------------- cost  0.606466
+
+------------mss multiplication verify-------------- cost  0.608846
+
+------------mss multiplication verify-------------- cost  0.610568
+aby cost
+0.000882677,0.00114217,0.00256047,0.00347806,0.00746568,0.0144986,0.0302234,0.0608616,
+aby verify cost
+0.00361399,0.00489519,0.00852729,0.0146405,0.0280486,0.0689841,0.130483,0.256725,
+swift offline cost
+0.00139265,0.0026405,0.0037701,0.00596999,0.012191,0.0233613,0.0414636,0.0887936,
+swift online cost
+0.00139265,0.0026405,0.0037701,0.00596999,0.012191,0.0233613,0.0414636,0.0887936,
+ours cost
+0.000400548,0.000546205,0.00106546,0.00167951,0.00522069,0.0148853,0.0311527,0.0647395,
+ours verify cost
+0.0508323,0.0715528,0.0790228,0.0986421,0.13585,0.216098,0.351775,0.610568,
