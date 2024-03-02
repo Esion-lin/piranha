@@ -28,6 +28,24 @@ Party prevParty(int party){
             return PARTY_B;
 	}		
 }
+void test_ring_mul(){
+    std::vector<uint64_t> ini1(32*12),ini2(32*12),ini3(32*12);
+    for(int i = 0; i < 32*12; i++){
+        ini1[i] = i;
+        ini2[i] = i;
+    }
+    DeviceData<uint64_t> ta(32*12),tb(32*12),tc(32*12);
+    thrust::copy(ini1.begin(), ini1.end(), ta.begin());
+    thrust::copy(ini2.begin(), ini2.end(), tb.begin());
+    gpu::ringMultiplication(&ta, &tb, &tc, 12, 32);
+    thrust::copy(tc.begin(), tc.end(), ini3.begin());
+    for(int i = 0; i < 12; i++){
+
+        for(int j = 0; j < 32; j++)
+            printf("%d ", ini3[i*32 + j]);
+        printf("\n");
+    }
+}
 template<class T>
 class MSS_Single{
     public:
@@ -149,39 +167,57 @@ class DotVerify{
     //TODO:random generate alpha
     
     MSS alpha;
-    DeviceData<uint64_t> gamma, temp;
-    DotVerify():gamma(Degree), temp(0){
+    DeviceData<uint64_t> gamma, temp1, temp2, temp3;
+    DotVerify():gamma(Degree), temp1(0), temp2(0), temp3(0){
         //set alpha
     }
     //input r_x r_y r_z
     void set_up( MSS *x,  MSS  *y, MSS  *z){
-        temp.resize(3*x->r.size());
+        temp1.resize(x->r_1.size());
+        temp2.resize(x->r_1.size());
+        temp3.resize(x->r_1.size());
         if(partyNum == PARTY_A){
-            
-            gpu::mssOffline(&x->r, &y->r,&alpha.r, &gamma, &temp,x->r.size()/Degree, Degree);
+            gpu::mssOffline(&x->r, &y->r,&alpha.r, &gamma, &temp1,&temp2,&temp3,x->r_1.size()/Degree, Degree);
+            // printf("point3----%d %d\n",gamma.size(),z->r.size());
             gamma += z->r;
+            // printf("point4----\n");
             gamma.transmit(PARTY_B);
             gamma.join();
-            printf("-----------------1\n");
-            temp.transmit(PARTY_B);
-            temp.join();
-            printf("-----------------2\n");
+            // printf("-----------------1\n");
+            temp1.transmit(PARTY_B);
+            temp1.join();
+            temp2.transmit(PARTY_B);
+            temp2.join();
+            temp3.transmit(PARTY_B);
+            temp3.join();
+            // printf("-----------------2\n");
         }else{
             if(partyNum == PARTY_B){
                 gamma.receive(PARTY_A);
                 gamma.join();
-                printf("-----------------1\n");
-                temp.receive(PARTY_A);
-                temp.join();
-                printf("-----------------2\n");
+                // printf("-----------------1\n");
+                temp1.receive(PARTY_A);
+                temp1.join();
+                temp2.receive(PARTY_A);
+                temp2.join();
+                temp3.receive(PARTY_A);
+                temp3.join();
+                // printf("-----------------2\n");
             }
         }
     }
     void verify( MSS *x,  MSS  *y, MSS  *z){
         if(partyNum != PARTY_A){
-            gpu::mssOnline(&temp, &x->r_1, &y->r_1, &alpha.r_1, &gamma, &z->r_1, x->r.size()/Degree, Degree);
+            gpu::mssOnline(&temp1,&temp2,&temp3, &x->r_1, &y->r_1, &alpha.r_1, &gamma, &z->r_1, x->r.size()/Degree, Degree);
         }
-        //open z
+        auto next = nextParty(partyNum);
+        auto prev = prevParty(partyNum);
+        //open z one party sends value, another sends hash
+        z->r_1.transmit(next);
+        z->r.receive(prev);
+        z->r_1.join();
+        z->r.join();
+        
     }
 };
 class DotForRing{
@@ -213,24 +249,31 @@ class DotForRing{
 bool DotReduce(MSS* x,MSS* y, MSS* z, MSS* x_p, MSS* y_p, MSS* z_p){
         
         //set N/2 linear function f^{N/2}_m
+    // printf("point0 %d\n", x->r.size()/Degree/2);
     MSS ff0(x->r.size()/Degree/2),ff1(x->r.size()/Degree/2),ff2(x->r.size()/Degree/2);
+    // printf("point1\n");
     MSS gg0(x->r.size()/Degree/2),gg1(x->r.size()/Degree/2),gg2(x->r.size()/Degree/2);
     MSS hh0(1), hh1(1), hh2(1);
+
     // gpu::ringLineInterpolation(x.r, ff0.r, ff1.r, ff2.r, x.r.size(), Degree);
     // printf("start interpolation%d %d\n", x->r_1.size(), Degree);
+    
     gpu::ringLineInterpolation(&x->r_1, &ff0.r_1, &ff1.r_1, &ff2.r_1, x->r_1.size()/Degree, Degree);
     gpu::ringLineInterpolation(&x->r_2, &ff0.r_2, &ff1.r_2, &ff2.r_2, x->r_2.size()/Degree, Degree);
     // gpu::ringLineInterpolation(y.r, gg0.r, gg1.r, gg2.r, x.r.size(), Degree);
     gpu::ringLineInterpolation(&y->r_1, &gg0.r_1, &gg1.r_1, &gg2.r_1, x->r_1.size()/Degree, Degree);
     gpu::ringLineInterpolation(&y->r_2, &gg0.r_2, &gg1.r_2, &gg2.r_2, x->r_2.size()/Degree, Degree);
+    
     //todo::generator delta with random
     DeviceData<uint64_t> temp(Degree);
     DeviceData<uint64_t> temp2(Degree);
     gg0.r.zero();
     gg0.r += gg0.r_1;
     gg0.r += gg0.r_2;
+
     gpu::ringDot(&ff0.r_1, &gg0.r, &hh0.r_1, gg0.r.size()/Degree, Degree);
     gpu::ringDot(&ff0.r_2, &gg0.r_1, &temp, gg0.r_1.size()/Degree, Degree);
+    // printf("point2\n");
     hh0.r_1+=temp;
     gg2.r.zero();
     gg2.r += gg2.r_1;
@@ -238,9 +281,10 @@ bool DotReduce(MSS* x,MSS* y, MSS* z, MSS* x_p, MSS* y_p, MSS* z_p){
     gpu::ringDot(&ff2.r_1, &gg2.r, &hh2.r_2, gg2.r.size()/Degree, Degree);
     gpu::ringDot(&ff2.r_2, &gg2.r_1, &temp, gg2.r_1.size()/Degree, Degree);
     hh2.r_1+=temp;
+
     reshare(hh0.r_1, hh0);
     reshare(hh2.r_1, hh2);
-    
+    // printf("point3\n");
     DeviceData<uint64_t> delta1(Degree), delta2(Degree), deltaprev(Degree), deltanext(Degree);
     //reveal delta
     auto next = nextParty(partyNum);
@@ -284,14 +328,16 @@ bool DotVerifyWithReduce(MSS* x, MSS* y, MSS* z){
 
     x2.resize(x->r_1.size()/2);
     y2.resize(x->r_1.size()/2);
-
+    // printf("11111111111\n");
     DotReduce(x,y,z, &x2, &y2, &z2);
+    // printf("11111111111\n");
     px = &x2;
     py = &y2;
     pz = &z2;
     px2 = &xorg;
     py2 = &yorg;
     pz2 = &zorg;
+    // printf("11111111111\n");
     for(int i = 0; i < R - 1; i++){
         px2->resize(px->r_1.size()/2); 
         py2->resize(py->r_1.size()/2); 

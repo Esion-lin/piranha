@@ -21,6 +21,7 @@
 #include "../ext/cxxopts.hpp"
 #include <json.hpp>
 #include "mpc/Verfiy.h"
+#include "mpc/sign.h"
 int partyNum;
 std::vector<AESObject*> aes_objects;
 //AESObject* aes_indep;
@@ -57,7 +58,12 @@ template<typename T, template<typename, typename...> typename Share>
 void test(NeuralNetwork<T, Share> *, std::ifstream &, std::ifstream &);
 void getBatch(std::ifstream &, std::istream_iterator<double> &, std::vector<double> &);
 void deleteObjects();
-
+void print_list(std::vector<double> list){
+    for(auto ele : list){
+        std::cout<<ele<<",";
+    }
+    std::cout<<"\n";
+}
 int main(int argc, char** argv) {
 
     // Parse options -- retrieve party id and config JSON
@@ -105,285 +111,224 @@ int main(int argc, char** argv) {
     //aes_prev = new AESObject(options.aes_prev_file);
 
     // Unit tests
-    uint32_t test_len = 1<<20;
-    std::vector<double> in_1(test_len), in_2(test_len);
-    std::vector<double> in_3(test_len);
-    MSS_Single<uint64_t> a(test_len), b(test_len), c(test_len);
-    DeviceData<uint64_t> result(a.r_1.size());
-    std::chrono::steady_clock::time_point start,end;
-    std::chrono::duration<double> time_span1;
 
-    SwiftShareType<uint64_t> swift_a(test_len);
-    SwiftShareType<uint64_t> swift_b(test_len);
-    SwiftShareType<uint64_t> swift_c(test_len);
-    
-    RSS<uint64_t> rss_a (in_1, false); 
-    RSS<uint64_t> rss_b (in_2, false);
-    RSS<uint64_t> rss_c (in_3, false);
+    //test ring multi
+    // test_ring_mul();
+    // test_bit_operator();
+    test_random();
+    // exit(0);
+    // uint32_t test_len = 1;
+    // std::vector<double> aby_time;
+    // std::vector<double> aby_verify_time;
+    // std::vector<double> swift_off_time;
+    // std::vector<double> swift_online_time;
+    // std::vector<double> ours;
+    // std::vector<double> ours_verify;
+    // uint32_t avg_time = 10;
+    // uint32_t deep = 1;
+    // for(int kk = 14; kk <= 21; kk++){
+    //     test_len = (1<<kk)/deep;
+    //     std::vector<double> in_1(test_len), in_2(test_len);
+    //     std::vector<double> in_3(test_len);
+    //     MSS_Single<uint64_t> a(test_len), b(test_len), c(test_len);
+    //     DeviceData<uint64_t> result(a.r_1.size());
+    //     std::chrono::steady_clock::time_point start,end;
+    //     std::chrono::duration<double> time_span1;
 
-
-    //test aby3
-
-    
-    func_profiler.clear();
-    func_profiler.start();
-    
-
-
-    start= std::chrono::steady_clock::now();
-    rss_c.zero();
-    rss_c += rss_a;
-    rss_c *= rss_b;
-    end = std::chrono::steady_clock::now();
-    time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
-    std:: cout <<std::endl<<"------------aby multiplication-------------- cost "<<" "<<time_span1.count()<<std::endl;
-
-    start= std::chrono::steady_clock::now();
-    RSS_verify<uint64_t>(&rss_a, &rss_b, &rss_c);
-    end = std::chrono::steady_clock::now();
-    time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
-    std:: cout <<std::endl<<"------------aby multiplication verify-------------- cost "<<" "<<time_span1.count()<<std::endl;
-
-    Swift<uint64_t> swift;
-    start= std::chrono::steady_clock::now();
-    swift.set_up(&swift_a, &swift_b, &swift_c);
-    end = std::chrono::steady_clock::now();
-    time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
-    std:: cout <<std::endl<<"------------swift multiplication offline-------------- cost "<<" "<<time_span1.count()<<std::endl;
-
-    start= std::chrono::steady_clock::now();
-    swift.online(&swift_a, &swift_b, &swift_c);
-    end = std::chrono::steady_clock::now();
-    time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
-    std:: cout <<std::endl<<"------------swift multiplication online-------------- cost "<<" "<<time_span1.count()<<std::endl;
-
-    MSS_Multiplication<uint64_t> mult;
-    start= std::chrono::steady_clock::now();
-    mult.set_up(a, b, c);
-    end = std::chrono::steady_clock::now();
-    time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
-    std:: cout <<std::endl<<"------------mss multiplication setup-------------- cost "<<" "<<time_span1.count()<<std::endl;
-    start= std::chrono::steady_clock::now();
-    mult.online(a, b, c);
-    end = std::chrono::steady_clock::now();
-    time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
-    std:: cout <<std::endl<<"------------mss multiplication online-------------- cost "<<" "<<time_span1.count()<<std::endl;
+    //     SwiftShareType<uint64_t> swift_a(test_len);
+    //     SwiftShareType<uint64_t> swift_b(test_len);
+    //     SwiftShareType<uint64_t> swift_c(test_len);
+        
+    //     RSS<uint64_t> rss_a (in_1, false); 
+    //     RSS<uint64_t> rss_b (in_2, false);
+    //     RSS<uint64_t> rss_c (in_3, false);
 
 
-    // DotForRing dot;
-    // start= std::chrono::steady_clock::now();
-    // dot.online(a, b, c);
-    // end = std::chrono::steady_clock::now();
-    // time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
-    // std:: cout <<std::endl<<"-------------------------- cost "<<" "<<time_span1.count()<<std::endl;
-    DotVerify dotv;
-    MSS  x(a), y(b), z(1), x2(1<<8), y2(1<<8), z2(1);
-    // printf("start verify with %d reduce\n", 1);
-    // start= std::chrono::steady_clock::now();
-    // DotVerifyWithReduce<1>(&x, &y, &z);
-    // end = std::chrono::steady_clock::now();
-    // time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
-    // std:: cout <<std::endl<<"------------mss ring reduce-------------- cost "<<" "<<time_span1.count()<<std::endl;
+    //     //test aby3
 
-    // printf("start verify with %d reduce\n", 2);
-    // start= std::chrono::steady_clock::now();
-    // DotVerifyWithReduce<2>(&x, &y, &z);
-    // end = std::chrono::steady_clock::now();
-    // time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
-    // std:: cout <<std::endl<<"------------mss ring reduce-------------- cost "<<" "<<time_span1.count()<<std::endl;
+        
+    //     func_profiler.clear();
+    //     func_profiler.start();
+        
+    //     double temp_count = 0;
+    //     double temp_count2 = 0;
 
-    // printf("start verify with %d reduce\n", 3);
-    // start= std::chrono::steady_clock::now();
-    // DotVerifyWithReduce<3>(&x, &y, &z);
-    // end = std::chrono::steady_clock::now();
-    // time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
-    // std:: cout <<std::endl<<"------------mss ring reduce-------------- cost "<<" "<<time_span1.count()<<std::endl;
+    //     for(int i = 0; i < avg_time*deep; i++){
+    //         start= std::chrono::steady_clock::now();
+    //         rss_c.zero();
+    //         rss_c += rss_a;
+    //         rss_c *= rss_b;
+    //         end = std::chrono::steady_clock::now();
+    //         time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
+    //         temp_count += time_span1.count();
+    //     }
+    //     std:: cout <<std::endl<<"------------aby multiplication-------------- cost "<<temp_count/avg_time<<std::endl;
+    //     aby_time.push_back(temp_count/avg_time);
+    //     temp_count = 0;
+    //     for(int i = 0; i < avg_time*deep; i++){
+    //         start= std::chrono::steady_clock::now();
+    //         RSS_verify<uint64_t>(&rss_a, &rss_b, &rss_c);
+    //         end = std::chrono::steady_clock::now();
+    //         time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
+    //         temp_count += time_span1.count();
+    //     }
+    //     std:: cout <<std::endl<<"------------aby multiplication verify-------------- cost "<<temp_count/avg_time<<std::endl;
+    //     aby_verify_time.push_back(temp_count/avg_time);
+    //     temp_count = 0;
+    //     temp_count2 = 0;
+    //     for(int i = 0; i < avg_time*deep; i++){
+    //         Swift<uint64_t> swift;
+    //         start= std::chrono::steady_clock::now();
+    //         swift.set_up(&swift_a, &swift_b, &swift_c);
+    //         end = std::chrono::steady_clock::now();
+    //         time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
+    //         temp_count += time_span1.count();
+    //         start= std::chrono::steady_clock::now();
+    //         swift.online(&swift_a, &swift_b, &swift_c);
+    //         end = std::chrono::steady_clock::now();
+    //         time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
+    //         temp_count2 += time_span1.count();
+    //     }
+    //     std:: cout <<std::endl<<"------------swift multiplication offline-------------- cost "<<temp_count/avg_time<<std::endl;
+    //     std:: cout <<std::endl<<"------------swift multiplication online-------------- cost "<<temp_count2/avg_time<<std::endl;
+    //     swift_off_time.push_back(temp_count/avg_time);
+    //     swift_online_time.push_back(temp_count2/avg_time);
+    //     temp_count = 0;
+    //     temp_count2 = 0;
+    //     for(int i = 0; i < avg_time*deep; i++){
+    //         MSS_Multiplication<uint64_t> mult;
+    //         start= std::chrono::steady_clock::now();
+    //         mult.set_up(a, b, c);
+    //         end = std::chrono::steady_clock::now();
+    //         time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
+    //         temp_count += time_span1.count();
+    //         start= std::chrono::steady_clock::now();
+    //         mult.online(a, b, c);
+    //         end = std::chrono::steady_clock::now();
+    //         time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
+    //         temp_count2 += time_span1.count();
+    //     }
+    //     std:: cout <<std::endl<<"------------mss multiplication setup-------------- cost "<<" "<<temp_count/avg_time<<std::endl;
+    //     std:: cout <<std::endl<<"------------mss multiplication online-------------- cost "<<" "<<temp_count2/avg_time<<std::endl;
+    //     double minnn_v = 100000.0;
+    //     ours.push_back((temp_count+temp_count2)/avg_time);
+    //     MSS  x(test_len*deep), y(test_len*deep), z(1);
+    //     if(kk<=15){
+    //         temp_count = 0;
+    //         for(int i = 0; i < avg_time; i++){
+                
+    //             start= std::chrono::steady_clock::now();
+    //             DotVerifyWithReduce<3>(&x, &y, &z);
+    //             end = std::chrono::steady_clock::now();
+    //             time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
+    //             temp_count += time_span1.count();
+    //         }
+    //         std:: cout <<std::endl<<"------------mss multiplication verify-------------- cost "<<" "<<temp_count/avg_time<<std::endl;
+    //         if(temp_count/avg_time < minnn_v)
+    //             minnn_v = temp_count/avg_time;
+    //     }
+    //     if(kk<=16){
+    //         temp_count = 0;
+    //         for(int i = 0; i < avg_time; i++){
+    //             start= std::chrono::steady_clock::now();
+    //             DotVerifyWithReduce<4>(&x, &y, &z);
+    //             end = std::chrono::steady_clock::now();
+    //             time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
+    //             temp_count += time_span1.count();
+    //         }
+    //         std:: cout <<std::endl<<"------------mss multiplication verify-------------- cost "<<" "<<temp_count/avg_time<<std::endl;
+    //         if(temp_count/avg_time < minnn_v)
+    //             minnn_v = temp_count/avg_time;
+    //     }
+    //     if(kk<=17){
+    //         temp_count = 0;
+    //         for(int i = 0; i < avg_time; i++){
+    //             start= std::chrono::steady_clock::now();
+    //             DotVerifyWithReduce<5>(&x, &y, &z);
+    //             end = std::chrono::steady_clock::now();
+    //             time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
+    //             temp_count += time_span1.count();
+    //         }
+    //         std:: cout <<std::endl<<"------------mss multiplication verify-------------- cost "<<" "<<temp_count/avg_time<<std::endl;
+    //         if(temp_count/avg_time < minnn_v)
+    //             minnn_v = temp_count/avg_time;
+    //     }
+    //     temp_count = 0;
+    //     for(int i = 0; i < avg_time; i++){
+    //         start= std::chrono::steady_clock::now();
+    //         DotVerifyWithReduce<6>(&x, &y, &z);
+    //         end = std::chrono::steady_clock::now();
+    //         time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
+    //         temp_count += time_span1.count();
+    //     }
+    //     std:: cout <<std::endl<<"------------mss multiplication verify-------------- cost "<<" "<<temp_count/avg_time<<std::endl;
+    //     if(temp_count/avg_time < minnn_v)
+    //             minnn_v = temp_count/avg_time;
 
-    printf("start verify with %d reduce\n", 4);
-    start= std::chrono::steady_clock::now();
-    DotVerifyWithReduce<4>(&x, &y, &z);
-    end = std::chrono::steady_clock::now();
-    time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
-    std:: cout <<std::endl<<"------------mss ring reduce-------------- cost "<<" "<<time_span1.count()<<std::endl;
+    //     temp_count = 0;
+    //     for(int i = 0; i < avg_time; i++){
+    //         start= std::chrono::steady_clock::now();
+    //         DotVerifyWithReduce<7>(&x, &y, &z);
+    //         end = std::chrono::steady_clock::now();
+    //         time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
+    //         temp_count += time_span1.count();
+    //     }
+    //     std:: cout <<std::endl<<"------------mss multiplication verify-------------- cost "<<" "<<temp_count/avg_time<<std::endl;
+    //     if(temp_count/avg_time < minnn_v)
+    //             minnn_v = temp_count/avg_time;
 
-    printf("start verify with %d reduce\n", 5);
-    start= std::chrono::steady_clock::now();
-    DotVerifyWithReduce<5>(&x, &y, &z);
-    end = std::chrono::steady_clock::now();
-    time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
-    std:: cout <<std::endl<<"------------mss ring reduce-------------- cost "<<" "<<time_span1.count()<<std::endl;
+    //     temp_count = 0;
+    //     for(int i = 0; i < avg_time; i++){
+    //         start= std::chrono::steady_clock::now();
+    //         DotVerifyWithReduce<8>(&x, &y, &z);
+    //         end = std::chrono::steady_clock::now();
+    //         time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
+    //         temp_count += time_span1.count();
+    //     }
+    //     std:: cout <<std::endl<<"------------mss multiplication verify-------------- cost "<<" "<<temp_count/avg_time<<std::endl;
+    //     if(temp_count/avg_time < minnn_v)
+    //             minnn_v = temp_count/avg_time;
 
-    printf("start verify with %d reduce\n", 6);
-    start= std::chrono::steady_clock::now();
-    DotVerifyWithReduce<6>(&x, &y, &z);
-    end = std::chrono::steady_clock::now();
-    time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
-    std:: cout <<std::endl<<"------------mss ring reduce-------------- cost "<<" "<<time_span1.count()<<std::endl;
+    //     temp_count = 0;
+    //     for(int i = 0; i < avg_time; i++){
+    //         start= std::chrono::steady_clock::now();
+    //         DotVerifyWithReduce<9>(&x, &y, &z);
+    //         end = std::chrono::steady_clock::now();
+    //         time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
+    //         temp_count += time_span1.count();
+    //     }
+    //     std:: cout <<std::endl<<"------------mss multiplication verify-------------- cost "<<" "<<temp_count/avg_time<<std::endl;
+    //     if(temp_count/avg_time < minnn_v)
+    //             minnn_v = temp_count/avg_time;
 
-    printf("start verify with %d reduce\n", 7);
-     start= std::chrono::steady_clock::now();
-    DotVerifyWithReduce<7>(&x, &y, &z);
-    end = std::chrono::steady_clock::now();
-    time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
-    std:: cout <<std::endl<<"------------mss ring reduce-------------- cost "<<" "<<time_span1.count()<<std::endl;
-
-    printf("start verify with %d reduce\n", 8);
-     start= std::chrono::steady_clock::now();
-    DotVerifyWithReduce<8>(&x, &y, &z);
-    end = std::chrono::steady_clock::now();
-    time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
-    std:: cout <<std::endl<<"------------mss ring reduce-------------- cost "<<" "<<time_span1.count()<<std::endl;
-
-    printf("start verify with %d reduce\n", 9);
-     start= std::chrono::steady_clock::now();
-    DotVerifyWithReduce<9>(&x, &y, &z);
-    end = std::chrono::steady_clock::now();
-    time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
-    std:: cout <<std::endl<<"------------mss ring reduce-------------- cost "<<" "<<time_span1.count()<<std::endl;
-
-
-    printf("start verify with %d reduce\n", 10);
-     start= std::chrono::steady_clock::now();
-    DotVerifyWithReduce<10>(&x, &y, &z);
-    end = std::chrono::steady_clock::now();
-    time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
-    std:: cout <<std::endl<<"------------mss ring reduce-------------- cost "<<" "<<time_span1.count()<<std::endl;
-
-
-    printf("start verify with %d reduce\n", 11);
-     start= std::chrono::steady_clock::now();
-    DotVerifyWithReduce<11>(&x, &y, &z);
-    end = std::chrono::steady_clock::now();
-    time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
-    std:: cout <<std::endl<<"------------mss ring reduce-------------- cost "<<" "<<time_span1.count()<<std::endl;
-
-    printf("start verify with %d reduce\n", 12);
-     start= std::chrono::steady_clock::now();
-    DotVerifyWithReduce<12>(&x, &y, &z);
-    end = std::chrono::steady_clock::now();
-    time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
-    std:: cout <<std::endl<<"------------mss ring reduce-------------- cost "<<" "<<time_span1.count()<<std::endl;
-
-    printf("start verify with %d reduce\n", 13);
-     start= std::chrono::steady_clock::now();
-    DotVerifyWithReduce<13>(&x, &y, &z);
-    end = std::chrono::steady_clock::now();
-    time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
-    std:: cout <<std::endl<<"------------mss ring reduce-------------- cost "<<" "<<time_span1.count()<<std::endl;
-
-    // printf("start reduce\n");
-    // start= std::chrono::steady_clock::now();
-    // DotReduce(&x, &y, &z, &x2, &y2, z2);
-    // end = std::chrono::steady_clock::now();
-    // time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
-    // std:: cout <<std::endl<<"------------mss ring reduce-------------- cost "<<" "<<time_span1.count()<<std::endl;
-    
-
-    // start= std::chrono::steady_clock::now();
-    // dotv.set_up(&x2, &y2, &z2);
-    // end = std::chrono::steady_clock::now();
-    // time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
-    // std:: cout <<std::endl<<"------------mss ring verify-------------- set_up cost "<<" "<<time_span1.count()<<std::endl;
-    // start= std::chrono::steady_clock::now();
-    // dotv.verify(&x2, &x2, &z2);
-    // end = std::chrono::steady_clock::now();
-    // time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
-    // std:: cout <<std::endl<<"------------mss ring verify-------------- online cost "<<" "<<time_span1.count()<<std::endl;
+    //     temp_count = 0;
+    //     for(int i = 0; i < avg_time; i++){
+    //         start= std::chrono::steady_clock::now();
+    //         DotVerifyWithReduce<10>(&x, &y, &z);
+    //         end = std::chrono::steady_clock::now();
+    //         time_span1 = std::chrono::duration_cast<std::chrono::duration<double>> (end - start);
+    //         temp_count += time_span1.count();
+    //     }
+    //     std:: cout <<std::endl<<"------------mss multiplication verify-------------- cost "<<" "<<temp_count/avg_time<<std::endl;
+    //     if(temp_count/avg_time < minnn_v)
+    //             minnn_v = temp_count/avg_time;
+    //     ours_verify.push_back(minnn_v);
+    // }
+    // printf("aby cost\n");
+    // print_list(aby_time);
+    // printf("aby verify cost\n");
+    // print_list(aby_verify_time);
+    // printf("swift offline cost\n");
+    // print_list(swift_off_time);
+    // printf("swift online cost\n");
+    // print_list(swift_online_time);
+    // printf("ours cost\n");
+    // print_list(ours);
+    // printf("ours verify cost\n");
+    // print_list(ours_verify);
     
     exit(0);
-    if (piranha_config["run_unit_tests"]) {
-        int returnCode = runTests(argc, argv);
-        if (returnCode != 0 || piranha_config["unit_test_only"]) {
-            exit(returnCode);
-        }
-    }
-
-    std::cout << "run unit tests? " << piranha_config["run_unit_tests"] << std::endl;
-
-    NeuralNetConfig nn_config;
-    std::cout << "config network: " << piranha_config["network"] << std::endl;
-    loadModel(&nn_config, piranha_config["network"]);
-
-#ifdef ONEPC
-    NeuralNetwork<uint64_t, OPC> net(&nn_config, piranha_config["nn_seed"]);
-#else
-#ifdef TWOPC
-    NeuralNetwork<uint64_t, TPC> net(&nn_config, piranha_config["nn_seed"]);
-#else
-#ifdef FOURPC
-    NeuralNetwork<uint64_t, FPC> net(&nn_config, piranha_config["nn_seed"]);
-#else
-    NeuralNetwork<uint64_t, RSS> net(&nn_config, piranha_config["nn_seed"]);
-#endif
-#endif
-#endif
-
-    net.printNetwork();
-
-    // Preload network weights if so-configured
-    if (piranha_config["preload"]) {
-        net.loadSnapshot(piranha_config["preload_path"]);
-    }
-
-    // Load learning rate schedule
-    int lr_len = piranha_config["lr_schedule"].size();
-    std::vector<int> lr_schedule;
-    for (int i = 0; i < lr_len; i++) {
-	    lr_schedule.push_back(piranha_config["lr_schedule"][i]);
-    }
-
-    // Load training and test datasets
-    std::ifstream train_data_file(std::string("files/") + nn_config.dataset + "/train_data");
-    if (!train_data_file.is_open()) {
-        std::cout << "Error opening training data file at " <<
-            std::string("files/") + nn_config.dataset + "/train_data" <<
-            std::endl;
-    }
-
-    std::ifstream train_label_file(std::string("files/") + nn_config.dataset + "/train_labels");
-    if (!train_label_file.is_open()) {
-        std::cout << "Error opening training label file at " <<
-            std::string("files/") + nn_config.dataset + "/train_labels" <<
-            std::endl;
-    }
-
-    std::ifstream test_data_file(std::string("files/") + nn_config.dataset + "/test_data");
-    if (!test_data_file.is_open()) {
-        std::cout << "Error opening test data file at " <<
-            std::string("files/") + nn_config.dataset + "/test_data" <<
-            std::endl;
-    }
-
-    std::ifstream test_label_file(std::string("files/") + nn_config.dataset + "/test_labels");
-    if (!test_label_file.is_open()) {
-        std::cout << "Error opening test label file at " <<
-            std::string("files/") + nn_config.dataset + "/test_label" <<
-            std::endl;
-    }
     
-    if (piranha_config["test_only"]) {
-        test(&net, test_data_file, test_label_file);
-    } else { // do training!
-        train(&net, &nn_config, piranha_config["run_name"], train_data_file, train_label_file, test_data_file, test_label_file, lr_schedule);
-    }
-
-    //delete aes_indep;
-    //delete aes_next;
-    //delete aes_prev;
-
-    // ----------> AES_TODO Delete AES objects
-    //for (int i = 0; i < aes_objects.size(); ++i) {
-    //    delete aes_objects[i]; // Calls ~AESObject and deallocates *aes_objects[i]
-    //}
-    //aes_objects.clear();
-
-    deleteObjects();
-
-    // wait a bit for the prints to flush
-    std::cout << std::flush;
-    for(int i = 0; i < 10000000; i++);
-   
-    return 0;
 }
 
 template<typename T, template<typename, typename...> typename Share>
